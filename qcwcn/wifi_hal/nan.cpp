@@ -266,8 +266,6 @@ wifi_error nan_publish_request(transaction_id id,
         info->secure_nan->supported_bootstrap =
               msg->nan_pairing_config.supported_bootstrapping_methods;
 #ifdef WPA_PASN_LIB
-        if (!msg->cipher_capabilities && msg->nan_pairing_config.enable_pairing_setup)
-            msg->cipher_capabilities = 0x4;
         if (!info->secure_nan->dev_grp_keys)
             nan_pairing_derive_grp_keys(info, t_nanCommand->getNmi(),
                                         msg->cipher_capabilities);
@@ -402,8 +400,6 @@ wifi_error nan_subscribe_request(transaction_id id,
         info->secure_nan->supported_bootstrap =
               msg->nan_pairing_config.supported_bootstrapping_methods;
 #ifdef WPA_PASN_LIB
-        if (!msg->cipher_capabilities && msg->nan_pairing_config.enable_pairing_setup)
-            msg->cipher_capabilities = 0x4;
         if (!info->secure_nan->dev_grp_keys)
             nan_pairing_derive_grp_keys(info, t_nanCommand->getNmi(),
                                         msg->cipher_capabilities);
@@ -629,7 +625,10 @@ wifi_error nan_bootstrapping_request(transaction_id id,
         ALOGE("%s: Error hal_info NULL", __FUNCTION__);
         return WIFI_ERROR_UNKNOWN;
     }
-
+    if (info->secure_nan == NULL) {
+        ALOGE("%s: Secure NAN not supported", __FUNCTION__);
+        return WIFI_ERROR_UNKNOWN;
+    }
     t_nanCommand = NanCommand::instance(wifiHandle);
     if (t_nanCommand == NULL) {
         ALOGE("%s: Error NanCommand NULL", __FUNCTION__);
@@ -718,7 +717,10 @@ wifi_error nan_bootstrapping_indication_response(transaction_id id,
         ALOGE("%s: Error hal_info NULL", __FUNCTION__);
         return WIFI_ERROR_UNKNOWN;
     }
-
+    if (info->secure_nan == NULL) {
+        ALOGE("%s: Secure NAN not supported", __FUNCTION__);
+        return WIFI_ERROR_UNKNOWN;
+    }
     t_nanCommand = NanCommand::instance(wifiHandle);
     if (t_nanCommand == NULL) {
         ALOGE("%s: Error NanCommand NULL", __FUNCTION__);
